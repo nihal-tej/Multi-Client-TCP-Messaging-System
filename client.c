@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
 
     printf("[%s] Connected to server!\n", timestamp());
 
-   /* The below loop is the username input in which it checks whether the
-    username is unique and only accepts the client if the username is unique */
+    // The below loop is the username input in which it checks whether the
+    // username is unique and only accepts the client if the username is unique 
     char name[256];
     char response[50];
 
@@ -133,23 +133,17 @@ int main(int argc, char *argv[])
     // Initializing the receiver thread
     pthread_t tid;
     pthread_create(&tid, NULL, receiver, p);
-    // Menu loop for the functionalities
+    // Menu loop for the functionalities,we will senf <type of operation> <Message that we want to send> ,and we will send this message to server for required operation
     while (1)
     {
         int choice;
-        printf("\n[%s]\n==== MENU ====\n", timestamp());
+        printf("\n[%s]\n==== GENERAL MENU ====\n", timestamp());
         printf("1 -> List users\n");
         printf("2 -> Direct Message\n");
         printf("3 -> Broadcast\n");
         printf("4 -> Rename User\n");
-        printf("5 -> List Groups\n");
-        printf("6 -> Create Group\n");
-        printf("7 -> Join Group\n");
-        printf("8 -> Rename Group\n");
-        printf("9-> Message in group\n");
-        printf("10-> Leave Group\n");
-        printf("11 -> Delete Group\n");
-        printf("12 -> Exit\n");
+        printf("5 -> Group Operations\n");
+        printf("6 -> Exit\n");
         printf("Enter choice: ");
         char temp[10];
         fgets(temp, sizeof(temp), stdin);
@@ -181,59 +175,9 @@ int main(int argc, char *argv[])
             strcat(final, msg);
             write(sockfd, final, strlen(final));
         }
-        else if (choice == 5)
-        {
-            write(sockfd, "listgroup", 9);
-        }
-        else if (choice == 6)
-        {
-            printf("[%s] Enter group name: ", timestamp());
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            bzero(joinMsg, sizeof(joinMsg));
-            strcpy(joinMsg, "creategroup ");
-            strcat(joinMsg, name);
-            write(sockfd, joinMsg, strlen(joinMsg));
-        }
-        else if (choice == 7)
-        {
-            printf("[%s] Enter group name: ", timestamp());
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            bzero(joinMsg, sizeof(joinMsg));
-            strcpy(joinMsg, "joingroup ");
-            strcat(joinMsg, name);
-            write(sockfd, joinMsg, strlen(joinMsg));
-        }
-        else if (choice == 10)
-        {
-            printf("[%s] Enter group name: ", timestamp());
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            bzero(joinMsg, sizeof(joinMsg));
-            strcpy(joinMsg, "leavegroup ");
-            strcat(joinMsg, name);
-            write(sockfd, joinMsg, strlen(joinMsg));
-        }
-        else if (choice == 11)
-        {
-            printf("[%s] Enter group name: ", timestamp());
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            bzero(joinMsg, sizeof(joinMsg));
-            strcpy(joinMsg, "deletegroup ");
-            strcat(joinMsg, name);
-            write(sockfd, joinMsg, strlen(joinMsg));
-        }
-        else if (choice == 12)
-        {
-            write(sockfd, "exit", 4);
-            printf("[%s] Disconnected\n", timestamp());
-            break;
-        }
         else if (choice == 4)
         {
-            printf("[%s] Enter new username: ", timestamp());
+            printf("[%s] Enter new username name: ", timestamp());
             fgets(name, sizeof(name), stdin);
             name[strcspn(name, "\n")] = 0;
             char msg2[300];
@@ -241,36 +185,116 @@ int main(int argc, char *argv[])
             strcat(msg2, name);
             write(sockfd, msg2, strlen(msg2));
         }
-        else if (choice == 8)
+        //Group operations menu
+        else if (choice == 5)
         {
-            char old[256], newn[256];
-            printf("[%s] Old group name: ", timestamp());
-            fgets(old, sizeof(old), stdin);
-            printf("[%s] New group name: ", timestamp());
-            fgets(newn, sizeof(newn), stdin);
-            old[strcspn(old, "\n")] = 0;
-            newn[strcspn(newn, "\n")] = 0;
-            char msg2[512];
-            strcpy(msg2, "renamegroup ");
-            strcat(msg2, old);
-            strcat(msg2, " ");
-            strcat(msg2, newn);
-            write(sockfd, msg2, strlen(msg2));
+            while (1)
+            {
+                int choice1;
+                printf("\n[%s]\n==== GROUP MENU ====\n", timestamp());
+                printf("1 -> List Groups\n");
+                printf("2 -> Create Group\n");
+                printf("3 -> Join Group\n");
+                printf("4 -> Rename Group\n");
+                printf("5-> Message in group\n");
+                printf("6-> Leave Group\n");
+                printf("7 -> Delete Group\n");
+                printf("8 -> Back\n");
+            }
+            printf("Enter choice: ");
+            temp[10];
+            fgets(temp, sizeof(temp), stdin);
+            choice = atoi(temp);
+            if (choice == 1)
+            {
+                write(sockfd, "listgroup", 9);
+            }
+            else if (choice == 2)
+            {
+                printf("[%s] Enter group name: ", timestamp());
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+                bzero(joinMsg, sizeof(joinMsg));
+                strcpy(joinMsg, "creategroup ");
+                strcat(joinMsg, name);
+                write(sockfd, joinMsg, strlen(joinMsg));
+            }
+            else if (choice == 3)
+            {
+                printf("[%s] Enter group name: ", timestamp());
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+                bzero(joinMsg, sizeof(joinMsg));
+                strcpy(joinMsg, "joingroup ");
+                strcat(joinMsg, name);
+                write(sockfd, joinMsg, strlen(joinMsg));
+            }
+            else if (choice == 4)
+            {
+                char old[256], newn[256];
+                printf("[%s] Old group name: ", timestamp());
+                fgets(old, sizeof(old), stdin);
+                printf("[%s] New group name: ", timestamp());
+                fgets(newn, sizeof(newn), stdin);
+                old[strcspn(old, "\n")] = 0;
+                newn[strcspn(newn, "\n")] = 0;
+                char msg2[512];
+                strcpy(msg2, "renamegroup ");
+                strcat(msg2, old);
+                strcat(msg2, " ");
+                strcat(msg2, newn);
+                write(sockfd, msg2, strlen(msg2));
+            }
+            else if (choice == 5)
+            {
+                printf("[%s] Enter group name: ", timestamp());
+                fgets(user, sizeof(user), stdin);
+                printf("[%s] Enter message: ", timestamp());
+                fgets(msg, sizeof(msg), stdin);
+                user[strcspn(user, "\n")] = 0;
+                msg[strcspn(msg, "\n")] = 0;
+                bzero(final, sizeof(final));
+                strcpy(final, "dmgroup ");
+                strcat(final, user);
+                strcat(final, " ");
+                strcat(final, msg);
+                write(sockfd, final, strlen(final));
+            }
+            else if (choice == 6)
+            {
+                printf("[%s] Enter group name: ", timestamp());
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+                bzero(joinMsg, sizeof(joinMsg));
+                strcpy(joinMsg, "leavegroup ");
+                strcat(joinMsg, name);
+                write(sockfd, joinMsg, strlen(joinMsg));
+            }
+            else if (choice == 7)
+            {
+                printf("[%s] Enter group name: ", timestamp());
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+                bzero(joinMsg, sizeof(joinMsg));
+                strcpy(joinMsg, "deletegroup ");
+                strcat(joinMsg, name);
+                write(sockfd, joinMsg, strlen(joinMsg));
+            }
+            else if (choice == 8)
+            {
+                printf("[%s] Exit back from Group Menu\n", timestamp());
+                break;
+            }
+            else
+            {
+                printf("[%s] Invalid choice\n", timestamp());
+            }
         }
-        else if (choice == 9)
+        else if (choice == 6)
         {
-            printf("[%s] Enter group name: ", timestamp());
-            fgets(user, sizeof(user), stdin);
-            printf("[%s] Enter message: ", timestamp());
-            fgets(msg, sizeof(msg), stdin);
-            user[strcspn(user, "\n")] = 0;
-            msg[strcspn(msg, "\n")] = 0;
-            bzero(final, sizeof(final));
-            strcpy(final, "dmgroup ");
-            strcat(final, user);
-            strcat(final, " ");
-            strcat(final, msg);
-            write(sockfd, final, strlen(final));
+            write(sockfd, "exit", 4);
+            printf("[%s] Disconnected\n", timestamp());
+            break;
         }
         else
         {
